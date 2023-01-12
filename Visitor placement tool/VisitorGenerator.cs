@@ -16,7 +16,7 @@ namespace Visitor_placement_tool
             for (int i = 1; i <= visitorCount; i++)
             {
                 Random random = new Random();
-                DateTime start = new DateTime(1950, 1, 1);
+                DateTime start = new DateTime(1990, 1, 1);
 
                 int range = (DateTime.Today - start).Days;
 

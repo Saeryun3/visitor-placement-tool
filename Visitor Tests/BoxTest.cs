@@ -11,7 +11,7 @@ namespace Visitor_Tests
     public class BoxTest
     {
         [TestMethod]
-        public void HasRowForSeatsMaxRowsTrueTest()
+        public void HasPlaceableRowForMaxRowsTrueTest()
         {
             //arrange
             List<Seat> seats = new List<Seat>();
@@ -43,14 +43,14 @@ namespace Visitor_Tests
             };
 
             //act
-            var result = box.HasRowForSeats(10);
+            var result = box.HasPlaceableRowFor(10);
 
             //assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public void HasRowForSeatsFalseTest()
+        public void HHasPlaceableRowForFalseTest()
         {
             //arrange
             List<Seat> seats = new List<Seat>();
@@ -78,14 +78,14 @@ namespace Visitor_Tests
             };
 
             //act
-            var result = box.HasRowForSeats(5);
+            var result = box.HasPlaceableRowFor(5);
 
             //assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public void HasRowForSeatsTrueTest()
+        public void HasPlaceableRowForEqualTrueTest()
         {
             //arrange
             List<Seat> seats = new List<Seat>();
@@ -113,7 +113,7 @@ namespace Visitor_Tests
             };
 
             //act
-            var result = box.HasRowForSeats(4);
+            var result = box.HasPlaceableRowFor(4);
 
             //assert
             Assert.IsTrue(result);

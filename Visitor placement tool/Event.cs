@@ -26,13 +26,46 @@ namespace Visitor_placement_tool
             MaximumVisitorsAllowed = maximumVisitorsAllowed;
         }
 
+        //public void CreateBox()
+        //{
+        //    Box box = new Box();
+        //    box.rows = new List<Row>();
+        //    box.CreateRow();
+        //    box.BoxCode = this.GetNextBoxCode();
+        //    this.boxes.Add(box);
+        //}
+
+        //public char GetNextBoxCode()
+        //{
+        //    if (boxes.Count > 0)
+        //    {
+        //        char boxCode = boxes.Last().BoxCode;
+        //        return (char)((int)boxCode + 1);
+        //    }
+        //    else
+        //    {
+        //        return 'A';
+        //    }
+        //}
+
+        public int TotalSeats()
+        {
+            int total = 0;
+
+            foreach (Box box in boxes)
+            {
+                total += box.TotalSeats();
+            }
+            return total;
+        }
+
         public void CreateBox()
         {
             Box box = new Box();
             box.rows = new List<Row>();
             box.CreateRow();
-            box.BoxCode = this.GetNextBoxCode();
-            this.boxes.Add(box);
+            box.BoxCode = GetNextBoxCode();
+            boxes.Add(box);
         }
 
         public char GetNextBoxCode()
@@ -48,17 +81,58 @@ namespace Visitor_placement_tool
             }
         }
 
-        public int TotalSeats()
+        public void PlaceGroups(List<Group> groups, Event @event)
         {
-            int total = 0;
-
-            foreach (Box box in boxes)
+            foreach (Group group in groups)
             {
-                total += box.TotalSeats();
+                //kijk in welke vak de groep geplaatst moet worden en plaats deze vervolgens in deze vak
+                GetAssignedBox(group, @event).PlaceGroupIntoBox(group, this);
             }
-            return total;
         }
-        public void SortGroups(List<Group> groups)
+
+        public Box GetAssignedBox(Group group, Event @event)
+        {
+            // Als er geen toegewezen vak is, maak nieuwe aan en wijs toe;
+            if (boxes.Count == 0)
+            {
+                CreateBox();
+                return boxes.Last();
+            }
+            else
+            {
+                foreach (Box box in boxes)
+                {
+                    // Kijk of bezoekers van de groep passen in deze vak
+                    if (group.visitors.Count <= box.RemainingSeatCount())
+                    {
+                        List<Visitor> children = group.ChildsAtEvent(@event);
+
+                        //alleen als er volwassen zijn.
+                        if (children.Count == 0)
+                        {
+                            return box;
+                        }
+                        // als er kinderen zijn
+                        else
+                        {
+                            // kijkt of er minimaal 1 volwassene met de kinderen op een rij geplaats kan worden
+                            if (box.HasPlaceOnFirstRowFor(children.Count + 1))
+                            {
+                                // Wijs toe en stop met loop
+                                return box;
+                            }
+                        }
+                    }
+                }
+
+                // Als er geen vak is toegewezen, maak nieuwe vak.
+                CreateBox();
+                return boxes.Last();
+            }
+        }
+        
+
+        public void SortGroups(ref List<Group> groups)
         {
             // Filter lege groepen voor het plaatsen
             groups = groups.Where(group => group.visitors.Count > 0).ToList();
@@ -67,131 +141,148 @@ namespace Visitor_placement_tool
             groups = groups.OrderByDescending(group => group.ChildsAtEvent(this).Count).ToList();
         }
 
-        public Box GetAssignedBox(Group group)
-        {
-            // Als er geen toegewezen vak is, maak nieuwe aan en wijs toe;
-            if (this.boxes.Count == 0)
-            {
-                this.CreateBox();
-                return this.boxes.Last();
-            }
-            else
-            {
-                foreach (Box box in this.boxes)
-                {
-                    // Kijk of bezoekers van de groep passen in deze vak en of er minimaal 1 volwassene met de kinderen op een rij past
-                    if (group.visitors.Count <= box.RemainingSeatCount() && box.HasRowForSeats(group.ChildsAtEvent(this).Count + 1))
-                    {
-                        // Wijs toe en stop met loop
-                        return box;
-                    }
-                }
-                // Als er geen vak is toegewezen, maak nieuwe vak en wijs toe
-                this.CreateBox();
-                return this.boxes.Last();
-            }
-        }
+        //public Box GetAssignedBox(Group group)
+        //{
+        //    // Als er geen toegewezen vak is, maak nieuwe aan en wijs toe;
+        //    if (this.boxes.Count == 0)
+        //    {
+        //        this.CreateBox();
+        //        return this.boxes.Last();
+        //    }
+        //    else
+        //    {
+        //        foreach (Box box in this.boxes)
+        //        {
+        //            // Kijk of bezoekers van de groep passen in deze vak
+        //            if (group.visitors.Count <= box.RemainingSeatCount())
+        //            {
+        //                List<Visitor> children = group.ChildsAtEvent(this);
 
-        public void PlaceGroups(List<Group> groups)
-        {
-            foreach (Group group in groups)
-            {
-                Box assignedBox = this.GetAssignedBox(group);
-                List<Visitor> children = group.ChildsAtEvent(this);
-                List<Visitor> adults = group.AdultsAtEvent(this);
+        //                //alleen als er volwassen zijn.
+        //                if (children.Count == 0)
+        //                {
+        //                    return box;
+        //                }
+        //                // als er kinderen zijn
+        //                else
+        //                {
+        //                    // kijkt of er minimaal 1 volwassene met de kinderen op een rij geplaats kan worden
+        //                    if (box.HasPlaceOnFirstRowFor(children.Count + 1))
+        //                    {
+        //                        // Wijs toe en stop met loop
+        //                        return box;
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                //plaats groep met kinderen
-                if (children.Count > 0)
-                {
-                    // Plaats eerst 1 volwassene met kinderen op een rij
-                    Row assignedRow = null;
+        //        // Als er geen vak is toegewezen, maak nieuwe vak.
+        //        this.CreateBox();
+        //        return this.boxes.Last();
+        //    }
+        //}
 
-                    //zolang er geen aangewezen rij is 
-                    while (assignedRow == null)
-                    {
-                        //voor elke rij in aangewezen vak 
-                        foreach (Row row in assignedBox.rows)
-                        {
-                            //als de rij plek heeft voor kinderen en 1 volwassene => plaats 
-                            if (children.Count + 1 <= row.RemainingSeatCount())
-                            {
-                                //wijs rij toe 
-                                assignedRow = row;
-                                // Plaats eerste volwassene 
-                                Visitor firstAdult = adults[0];
-                                assignedRow.PlaceVisitor(firstAdult);
+       
+        //    foreach (Group group in groups)
+        ////TODO: Unit test
+        //    {
+        //        Box assignedBox = this.GetAssignedBox(group);
+        //        List<Visitor> children = group.ChildsAtEvent(this);
+        //        List<Visitor> adults = group.AdultsAtEvent(this);
 
-                                // Plaats kinderen
-                                foreach (Visitor child in children)
-                                {
-                                    assignedRow.PlaceVisitor(child);
-                                }
-                                break;
-                            }
-                        }
+        //        //plaats groep met kinderen
+        //        if (children.Count > 0)
+        //        {
+        //            // Plaats eerst 1 volwassene met kinderen op een rij
+        //            Row assignedRow = null;
 
-                        if (assignedRow == null)
-                        {
-                            assignedBox.CreateRow();
-                        }
-                    }
+        //            //zolang er geen aangewezen rij is 
+        //            while (assignedRow == null)
+        //            {
+        //                //voor elke rij in aangewezen vak 
+        //                foreach (Row row in assignedBox.rows)
+        //                {
+        //                    //als de rij plek heeft voor kinderen en 1 volwassene => plaats 
+        //                    if (children.Count + 1 <= row.RemainingSeatCount())
+        //                    {
+        //                        //wijs rij toe 
+        //                        assignedRow = row;
+        //                        // Plaats eerste volwassene 
+        //                        Visitor firstAdult = adults[0];
+        //                        assignedRow.PlaceVisitor(firstAdult);
 
-                    // Volwassene die overblijven nadat 1e volwassene en kinderen geplaats zijn
-                    int remainingAdultCount = adults.Count - 1;
+        //                        // Plaats kinderen
+        //                        foreach (Visitor child in children)
+        //                        {
+        //                            assignedRow.PlaceVisitor(child);
+        //                        }
+        //                        break;
+        //                    }
+        //                }
 
-                    //Als er nog volwassenen zijn
-                    if (remainingAdultCount > 0)
-                    {
-                        // als er nog plek is voor overgebleven volwassen op aangewezen rij => plaats
-                        if (assignedRow != null && remainingAdultCount <= assignedRow.RemainingSeatCount())
-                        {
-                            for (int i = 1; i <= remainingAdultCount; i++)
-                            {
-                                assignedRow.PlaceVisitor(adults[i]);
-                            }
-                        }
-                        else
-                        {
-                            for (int i = 1; i <= remainingAdultCount; i++)
-                            {
-                                Row availableRow = assignedBox.FirstAvailableRow();
-                                availableRow.PlaceVisitor(adults[i]);
-                            }
-                        }
-                    }
-                }
-                //plaats groep volwassen
-                else
-                {
+        //                if (assignedRow == null)
+        //                {
+        //                    assignedBox.CreateRow();
+        //                }
+        //            }
 
-                    bool placedAdults = false;
-                    
-                    foreach (Row row in assignedBox.rows)
-                    {
-                        //kijk of groep volwassenen in één rij kan
-                        if (adults.Count <= row.RemainingSeatCount())
-                        {
-                            foreach (Visitor adult in adults)
-                            {
-                                row.PlaceVisitor(adult);
-                            }
+        //            // Volwassene die overblijven nadat 1e volwassene en kinderen geplaats zijn
+        //            int remainingAdultCount = adults.Count - 1;
 
-                            placedAdults = true;
-                            break;
-                        }
-                    }
-                    //als volwassenen niet in één rij past => plaats visitor in de eerste volgende beschikbare rij 
-                    if (!placedAdults)
-                    {
-                        foreach (Visitor adult in adults)
-                        {
-                            Row availableRow = assignedBox.FirstAvailableRow();
-                            availableRow.PlaceVisitor(adult);
-                        }
-                    }
-                }
-            }
-        }
+        //            //Als er nog volwassenen zijn
+        //            if (remainingAdultCount > 0)
+        //            {
+        //                // als er nog plek is voor overgebleven volwassen op aangewezen rij => plaats + vak gekeken
+
+        //                if (remainingAdultCount <= assignedRow.RemainingSeatCount())
+        //                {
+        //                    for (int i = 1; i <= remainingAdultCount; i++)
+        //                    {
+        //                        assignedRow.PlaceVisitor(adults[i]);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    for (int i = 1; i <= remainingAdultCount; i++)
+        //                    {
+        //                        Row availableRow = assignedBox.FirstAvailableRow();
+        //                        availableRow.PlaceVisitor(adults[i]);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        //plaats groep volwassen
+        //        else
+        //        {
+
+        //            bool placedAdults = false;
+
+        //            foreach (Row row in assignedBox.rows)
+        //            {
+        //                //kijk of groep volwassenen in één rij kan
+        //                if (adults.Count <= row.RemainingSeatCount())
+        //                {
+        //                    foreach (Visitor adult in adults)
+        //                    {
+        //                        row.PlaceVisitor(adult);
+        //                    }
+
+        //                    placedAdults = true;
+        //                    break;
+        //                }
+        //            }
+        //            //als volwassenen niet in één rij past => plaats visitor in de eerste volgende beschikbare rij 
+        //            if (!placedAdults)
+        //            {
+        //                foreach (Visitor adult in adults)
+        //                {
+        //                    Row availableRow = assignedBox.FirstAvailableRow();
+        //                    availableRow.PlaceVisitor(adult);
+        //                }
+        //            }
+        //        }
+        //    }
+
 
         public void FilterAllowedVisitors(List<Group> groups)
         {
@@ -223,6 +314,7 @@ namespace Visitor_placement_tool
                     {
                         visitor.Reason = "Alleen kinderen niet toegestaan";
                     }
+
                     group.visitors.Remove(visitor);
                     RejectedVisitors.Add(visitor);
                 }

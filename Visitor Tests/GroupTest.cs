@@ -26,9 +26,7 @@ namespace AlgoritmTests
 
             //assert
             Assert.IsTrue(group.visitors.Count == visitors.Count);
-            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name &&
-                group.visitors[0].BirthDate == visitors[0].BirthDate &&
-                group.visitors[0].RegisterTime == visitors[0].RegisterTime);
+            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name && group.visitors[0].BirthDate == visitors[0].BirthDate && group.visitors[0].RegisterTime == visitors[0].RegisterTime);
         }
         [TestMethod]
         public void CheckAdultsInGroupWithAdultAndChildren()
@@ -55,9 +53,7 @@ namespace AlgoritmTests
             
             //assert
             Assert.IsTrue(result.Count == 1);
-            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name &&
-                group.visitors[0].BirthDate == visitors[0].BirthDate &&
-                group.visitors[0].RegisterTime == visitors[0].RegisterTime);
+            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name && group.visitors[0].BirthDate == visitors[0].BirthDate && group.visitors[0].RegisterTime == visitors[0].RegisterTime);
         }
 
         [TestMethod]
@@ -83,9 +79,7 @@ namespace AlgoritmTests
 
             //assert
             Assert.IsTrue(result.Count == 2);
-            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name &&
-                group.visitors[0].BirthDate == visitors[0].BirthDate &&
-                group.visitors[0].RegisterTime == visitors[0].RegisterTime);
+            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name && group.visitors[0].BirthDate == visitors[0].BirthDate && group.visitors[0].RegisterTime == visitors[0].RegisterTime);
         }
 
         [TestMethod]
@@ -138,9 +132,7 @@ namespace AlgoritmTests
 
             //assert
             Assert.IsTrue(result.Count == 1);
-            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name &&
-                group.visitors[0].BirthDate == visitors[0].BirthDate &&
-                group.visitors[0].RegisterTime == visitors[0].RegisterTime);
+            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name && group.visitors[0].BirthDate == visitors[0].BirthDate && group.visitors[0].RegisterTime == visitors[0].RegisterTime);
         }
 
         [TestMethod]
@@ -191,9 +183,7 @@ namespace AlgoritmTests
 
             //assert
             Assert.IsTrue(result.Count == 2);
-            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name &&
-                group.visitors[0].BirthDate == visitors[0].BirthDate &&
-                group.visitors[0].RegisterTime == visitors[0].RegisterTime);
+            Assert.IsTrue(group.visitors[0].Name == visitors[0].Name && group.visitors[0].BirthDate == visitors[0].BirthDate && group.visitors[0].RegisterTime == visitors[0].RegisterTime);
         }
 
         [TestMethod]

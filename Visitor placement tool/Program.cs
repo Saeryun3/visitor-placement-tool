@@ -29,10 +29,11 @@ public class Program
         @event.RejectOverbookedVisitors(groups);
 
         //sorteer groeps in grootte
-        @event.SortGroups(groups);
+        @event.SortGroups(ref groups);
 
         // plaats van groepen in vakken
-        @event.PlaceGroups(groups);
+        
+        @event.PlaceGroups(groups, @event);
 
         Console.WriteLine($"Totaal stoelen in het event: {@event.TotalSeats()}");
         Console.ForegroundColor = ConsoleColor.Green;

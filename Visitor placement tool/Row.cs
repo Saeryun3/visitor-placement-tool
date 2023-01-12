@@ -24,6 +24,6 @@ namespace Visitor_placement_tool
             seat.SeatNumber = this.seats.Count + 1;
             seat.RowNumber = this.RowNumber;
             this.seats.Add(seat);
-        }      
+        }  
     }
 }

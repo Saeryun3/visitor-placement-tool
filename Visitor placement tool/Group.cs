@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
-namespace Visitor_placement_tool
+﻿namespace Visitor_placement_tool
 {
     public class Group
     {
@@ -80,9 +73,16 @@ namespace Visitor_placement_tool
                 if (!AllowedVisitors(@event).Contains(visitor))
                 {
                     rejectedVisitors.Add(visitor);
+                    visitor.Reason = "Mag niet binnen door een te late boeking";
                 }
             }
             return rejectedVisitors;
         }
+        
+        public Group()
+        {
+
+        }
     }
+
 }

@@ -14,7 +14,6 @@ namespace Visitor_Tests
         public void RemaininingSeatCountTest()
         {
             //arrange
-            int seatCount = 8;
             List<Seat> seats = new List<Seat>();
             seats.Add(new Seat());
             seats.Add(new Seat());
@@ -31,7 +30,8 @@ namespace Visitor_Tests
             var result = row.RemainingSeatCount();
             var expected = 4;
             //assert
-            Assert.AreEqual(expected, result);         }
+            Assert.AreEqual(expected, result);
+        }
 
         [TestMethod]
         public void PlaceVisitorTest()
